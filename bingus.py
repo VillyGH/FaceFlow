@@ -9,8 +9,6 @@ from keras.models import load_model
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 
-
-
 import pickle
 from pathlib import Path
 
