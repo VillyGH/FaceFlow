@@ -1,4 +1,4 @@
-'''import os
+import os
 
 import numpy as np
 import tensorboard as tensorboard
@@ -97,4 +97,4 @@ X = X/255.0
 
 
 
-model = load_model("this-shit.h5")
+model = load_model("this-shit.h5")'''
