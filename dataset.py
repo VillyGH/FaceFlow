@@ -1,51 +1,34 @@
-
-from PIL import Image, ExifTags
-
-
-
+from PIL import Image as ImagePil
 import numpy as np
 import matplotlib
 matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import os
 import cv2
-from tqdm import tqdm
 import pickle
 from pathlib import Path
 
-DATADIR = r"C:\Users\Utilisateur\Desktop\faces\metadata"
 
-
-
-def getExifdata(file):
-    img = Image.open(file)
-    exif = {ExifTags.TAGS[k]: v for k, v in img._getexif().items() if k in ExifTags.TAGS}
-    keywords = str(exif["XPKeywords"]).replace(r"\x00", "").replace("b'", '').replace("'", '')
-    keywords = keywords.split(';')
-    return keywords
-
-
+DATADIR = r"C:\Users\Utilisateur\Desktop\dataset"
+def getText(dir):
+    img = ImagePil.open(dir)
+    tags = str(img.text).replace("}", "").replace("'", "").split(";")
+    tags.pop(0)
+    if('barbe' not in tags):
+        tags.append("pas de barbe")
+    if('lunettes' not in tags):
+        tags.append("pas de lunettes")
+    return tags
 IMG_SIZE = 50
-
 training_data = []
-for img in os.listdir(DATADIR):  # iterate over each image per dogs and cats
-    #img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_GRAYSCALE)  # convert to array
-    currentImage = os.path.join(DATADIR, img)
-    currentTags = getExifdata(os.path.join(DATADIR,img))
-    img_array = cv2.imread(currentImage, cv2.IMREAD_GRAYSCALE)  # convert to array
+files = Path(DATADIR).glob('*')
+for file in files:
+    #file = Path(file)
+    filename = os.path.join(file)
+    tags = getText(file)
+    img_array = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)  # convert to array
     new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))  # resize to normalize data size
-    training_data.append([new_array, currentTags])  # add this to our training_data
-    #new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
-    #plt.imshow(new_array, cmap='gray')
+    training_data.append([img_array, tags])  # add this to our training_data
 
-    break  # we just want one for now so break
-#break  #...and one more!
-
-
-
-
-
-print(len(training_data))
 
 x = []
 y = []
